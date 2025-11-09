@@ -1,143 +1,147 @@
+# libraries for data transformation
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
+
+#libraries for preprocessing and tuning
+from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.model_selection import GridSearchCV, train_test_split, StratifiedKFold
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+#libraries for machine learning models that we are testing
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier # for the future
+from sklearn.tree import DecisionTreeClassifier # for the future 
 from xgboost import XGBClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, mean_absolute_error, mean_squared_error, r2_score
-import warnings
-from sklearn.decomposition import PCA
 
-warnings.filterwarnings('ignore')
+# result metrics
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-# Load the data
+# for PCHF-like feature engineering (non parent paper)
+from sklearn.decomposition import PCA # for the future
+
+# load dataset
 df = pd.read_csv(r"C:\Users\fiona\OneDrive\Desktop\DS340Wproject\dataset.csv")
 
-categorical_cols = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'ca', 'thal', 'dataset']
-for col in categorical_cols:
-    df[col] = LabelEncoder().fit_transform(df[col].astype(str))
+# transform target variable into binary format - 0 and 1
+df['num'] = (df['num'] > 0).astype(int) # multiple values in data besides 0 and 1
 
-imputer = SimpleImputer(strategy="median")
-for col in ['trestbps', 'ca', 'oldpeak', 'chol', 'thalch']:
-    df[col] = imputer.fit_transform(df[[col]])
-
-df = df[df['trestbps'] != 0]
-
-df['dataset'] = LabelEncoder().fit_transform(df['dataset'].astype(str))
-
+# separate features and target
 X = df.drop('num', axis=1)
 y = df['num']
 
-for col in categorical_cols:
-    X[col] = LabelEncoder().fit_transform(X[col].astype(str))
+# categorical and numerical columns
+categorical_cols = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'ca', 'thal', 'dataset']
+numerical_cols = [col for col in X.columns if col not in categorical_cols]
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+# split dataset: 70% train, 15% validation, 15% test
+X_train_full, X_test, y_train_full, y_test = train_test_split(
+    X, y, test_size=0.15, stratify=y, random_state=42
+)
+X_train, X_val, y_train, y_val = train_test_split(
+    X_train_full, y_train_full, test_size=0.1765, stratify=y_train_full, random_state=42
+)  # 0.1765 ≈ 15% of original dataset - gets validation set
 
-pca = PCA(n_components=8 random_state=42)
-X_pca = pca.fit_transform(X_scaled)
+# preprocessing: 
+preprocessor = ColumnTransformer(
+    transformers=[
+        # handles missing numerical values since models can't handle them
+        ('num', Pipeline([
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler())
+        ]), numerical_cols),
 
-pca_features = pd.DataFrame(
-    X_pca,
-    columns=[f"PCA_Feature_{i+1}" for i in range(X_pca.shape[1])]
+        # handles categorical values with most frequent, then OneHotEncode
+        ('cat', Pipeline([
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('onehot', OneHotEncoder())
+        ]), categorical_cols)
+    ]
 )
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
-
-print("Data loaded and preprocessed. Shape:", X_train.shape)
-
-# Define models
-models = [
-    ('Logistic Regression', LogisticRegression(random_state=42)),
-    ('KNeighbors Classifier', KNeighborsClassifier()),
-    ('Support Vector Machine', SVC(random_state=42)),
-    ('Decision Tree Classifier', DecisionTreeClassifier(random_state=42)),
-    ('Random Forest', RandomForestClassifier(random_state=42)),
-    ('Gradient Boosting', GradientBoostingClassifier(random_state=42)),
-    ('XGBoost', XGBClassifier(random_state=42))
-]
-
-best_model = None
-best_accuracy = 0.0
-from sklearn.pipeline import Pipeline
-# Iterate over the models and evaluate their performance
-for name, model in models:
-    pipeline = Pipeline([
-        ('model', model)
-    ])
-    scores = cross_val_score(pipeline, X_train, y_train, cv=5)
-    mean_accuracy = scores.mean()
-    pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"Model: {name}")
-    print(f"Cross Validation Accuracy: {mean_accuracy}")
-    print(f"Test Accuracy: {accuracy}\n")
-    if accuracy > best_accuracy:
-        best_accuracy = accuracy
-        best_model = pipeline
-
-print("Best Model:", best_model)
-
-# Hyperparameter tuning
-def hyperparameter_tuning(X, y, categorical_columns, models):
-    results = {}
-    X_encoded = X.copy()
-    label_encoder = LabelEncoder()
-    for col in categorical_columns:
-        X_encoded[col] = label_encoder.fit_transform(X_encoded[col])
-
-    X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
-
-    for model_name, model in models.items():
-        param_grid = {}
-        if model_name == 'Logistic Regression':
-            param_grid = {'C': [0.1, 1, 10]}
-        elif model_name == 'KNN':
-            param_grid = {'n_neighbors': [3, 5, 7]}
-        elif model_name == 'Gaussian Naive Bayes':
-            param_grid = {'var_smoothing': np.logspace(-9, 0, 10)}
-        elif model_name == 'SVM':
-            param_grid = {'C': [0.1, 1], 'kernel': ['linear']}
-        elif model_name == 'Decision Tree':
-            param_grid = {'max_depth': [None, 10, 20, 30], 'min_samples_split': [2, 5, 10]}
-        elif model_name == 'Random Forest':
-            param_grid = {'n_estimators': [50, 100, 200], 'max_depth': [None, 10, 20, 30]}
-        elif model_name == 'AdaBoost':
-            param_grid = {'n_estimators': [50, 100, 200], 'learning_rate': [0.01, 0.1, 1]}
-        elif model_name == 'Gradient Boosting':
-            param_grid = {'n_estimators': [50, 100], 'learning_rate': [0.1, 0.5]}
-        elif model_name == 'XGBoost':
-            param_grid = {'n_estimators': [50, 100, 200], 'learning_rate': [0.01, 0.1, 1]}
-        else:
-            continue
-
-        grid_search = GridSearchCV(model, param_grid, cv=3, scoring='accuracy')
-        grid_search.fit(X_train, y_train)
-        best_params = grid_search.best_params_
-        best_estimator = grid_search.best_estimator_
-        y_pred = best_estimator.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        results[model_name] = {'best_params': best_params, 'accuracy': accuracy}
-
-    return results
-
-# Define models for tuning
-models_for_tuning = {
-    'Logistic Regression': LogisticRegression(),
-    'KNN': KNeighborsClassifier(),
-    'SVM': SVC(),
-    'Decision Tree': DecisionTreeClassifier(),
-    'Random Forest': RandomForestClassifier(),
-    'Gradient Boosting': GradientBoostingClassifier(),
-    'XGBoost': XGBClassifier()
+# models
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "KNN": KNeighborsClassifier(),
+    "SVM": SVC(probability=True),
+    "XGBoost": XGBClassifier(use_label_encoder=False, eval_metric="logloss", random_state=42)
 }
 
-# Perform hyperparameter tuning
-results = hyperparameter_tuning(X, y, categorical_cols, models_for_tuning)
+#parameter grids
+param_grids = {
+    "Logistic Regression": {
+        "model__C": [0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10],
+        "model__solver": ["liblinear", "lbfgs"],  # try another solve
+        "model__penalty": ["l2"]
+    },
+    "KNN": {
+        "model__n_neighbors": list(range(1, 31)),  # up to 30 neighbors
+        "model__weights": ["uniform", "distance"],
+        "model__metric": ["euclidean", "manhattan", "minkowski"]  # try different distances
+    },
+    "SVM": {
+        "model__C": [0.1, 0.5, 1, 2, 5, 10, 50],
+        "model__kernel": ["linear", "rbf", "poly"],
+        "model__gamma": ["scale", "auto", 0.01, 0.05, 0.1, 0.5, 1]
+    },
+    "XGBoost": {
+        "model__n_estimators": [50, 100, 150, 200, 300],
+        "model__learning_rate": [0.01, 0.03, 0.05, 0.07, 0.1, 0.15, 0.2],
+        "model__max_depth": [3, 4, 5, 6, 7],
+        "model__subsample": [0.6, 0.7, 0.8, 0.9, 1.0],
+        "model__colsample_bytree": [0.6, 0.7, 0.8, 0.9, 1.0]
+    }
+}
+
+# train and test everything at once
+def train_and_evaluate(models, param_grids, X_train, y_train, X_val, y_val):
+    results = []
+
+    for name, model in models.items():
+        print(f"\n=== {name} ===")
+
+        # pipeline for repetition
+        pipe = Pipeline([
+            ("preprocessor", preprocessor),
+            ("model", model)
+        ])
+
+        # training no gridsearch
+        pipe.fit(X_train, y_train)
+        y_pred = pipe.predict(X_val)
+
+        base_acc = accuracy_score(y_val, y_pred)
+        base_f1 = f1_score(y_val, y_pred)
+
+        print(f"Baseline:  Accuracy = {base_acc:.4f} | F1 = {base_f1:.4f}")
+
+        #gridsearch
+        cv_strategy = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        grid = GridSearchCV(pipe, param_grid=param_grids[name], cv=cv_strategy, scoring="accuracy", n_jobs=-1)
+        grid.fit(X_train, y_train)
+
+        # re-evaluate on the same validation split 
+        y_pred_grid = grid.predict(X_val)
+        tuned_acc = accuracy_score(y_val, y_pred_grid)
+        tuned_f1 = f1_score(y_val, y_pred_grid)
+
+        print(f"Tuned:     Accuracy = {tuned_acc:.4f} | F1 = {tuned_f1:.4f}")
+        print(f"Best Params: {grid.best_params_}")
+
+        results.append({
+            "Model": name,
+            "Baseline Accuracy": base_acc,
+            "Tuned Accuracy": tuned_acc,
+            "Best Params": grid.best_params_
+        })
+
+    return pd.DataFrame(results)
+
+
+#Run everything
+results = train_and_evaluate(models, param_grids, X_train, y_train, X_val, y_val)
+print("\nSummary")
 print(results)
