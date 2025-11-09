@@ -1,6 +1,7 @@
 # libraries for data transformation
 import pandas as pd
 import numpy as np
+import warnings
 
 #libraries for preprocessing and tuning
 from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder
@@ -22,6 +23,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 # for PCHF-like feature engineering (non parent paper)
 from sklearn.decomposition import PCA # for the future
+
+warnings.filterwarnings("ignore")
 
 # load dataset
 df = pd.read_csv(r"C:\Users\fiona\OneDrive\Desktop\DS340Wproject\dataset.csv")
@@ -119,8 +122,7 @@ def train_and_evaluate(models, param_grids, X_train, y_train, X_val, y_val):
         print(f"Baseline:  Accuracy = {base_acc:.4f} | F1 = {base_f1:.4f}")
 
         #gridsearch
-        cv_strategy = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-        grid = GridSearchCV(pipe, param_grid=param_grids[name], cv=cv_strategy, scoring="accuracy", n_jobs=-1)
+        grid = GridSearchCV(pipe, param_grid=param_grids[name], cv=5, scoring="accuracy", n_jobs=-1)
         grid.fit(X_train, y_train)
 
         # re-evaluate on the same validation split 
