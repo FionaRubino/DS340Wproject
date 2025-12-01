@@ -59,7 +59,7 @@ Baseline results and GridSearch with PCHF remain the same. However, originally w
 | Recall |  93.67  | 93.67 | 96.2 |
 | F1 | 96.73 | 96.73 | 98.06 |
 
-Baseline results remain the same. Initally we found 100% evaluation metrics for all of phase 2 and phase 3. This changed in our recent run through. Now, GridSearch-only kept results the same as the baseline, and adding PCHF improved metrics, achieving a 98.05% accuracy, 100% precision, 96.2% recall, and 98.06% F1 Score. The slight improvement still indicated PCHF can be beneficial to this model and achieve high peformance.
+Baseline results remain the same. Initially we found 100% evaluation metrics for all of phase 2 and phase 3. This changed in our recent run through. Now, GridSearch-only kept results the same as the baseline, and adding PCHF improved metrics, achieving a 98.05% accuracy, 100% precision, 96.2% recall, and 98.06% F1 Score. The slight improvement still indicated PCHF can be beneficial to this model and achieve high peformance.
 
 ### Decision Tree
 
