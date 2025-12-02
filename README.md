@@ -4,18 +4,18 @@ The dataset file is included within this repository. The data is loaded through 
  
 ## RUNNING THE NOTEBOOK
 1. Clone the repository:
-  In your terminal, run git clone https://github.com/FionaRubino/DS340Wproject.git
+  In your terminal, run ```git clone https://github.com/FionaRubino/DS340Wproject.git```
 2. Install Python if necessary. Verify you have Python 3.8+ installed with:
-     python --version
-   If you do not have python, you can install it.
+     ```python --version```
+   If you do not have python, you can install it here: https://www.python.org/downloads/ .
 3. Install Jupyter by running:
-     pip install notebook
+     ```pip install notebook```
 4. Install required packages:
-     pip install -r requirements.txt
+     ```pip install -r requirements.txt```
 5. Start Jupyter Notebook:
-    jupyter notebook
+    ```jupyter notebook```
    This will open a brower window.
-6. Navigate to the notebook file: heartdiseaseprediction.ipynb
+6. Navigate to the notebook file: heartprediction.ipynb
 7. Run all of the cells. Locate the Jupyter menu -> Kernel -> Restart & Run All. This runs all cells from start to finish.
 
 ## Results
