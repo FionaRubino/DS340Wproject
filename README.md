@@ -8,15 +8,15 @@ The dataset file is included within this repository. The data is loaded through 
 2. Install Python if necessary. Verify you have Python 3.8+ installed with:
      ```python --version``` or ```python3 --version``` if you have a MAC.
    If you do not have python, you can install it here: https://www.python.org/downloads/ .
-3. Install Jupyter by running:
+4. Install Jupyter by running:
      ```pip install notebook```
-4. Install required packages:
+5. Install required packages:
      ```pip install -r requirements.txt```
-5. Start Jupyter Notebook:
-    ```jupyter notebook```
+6. Start Jupyter Notebook by running: 
+    ```jupyter notebook``` or ```python -m notebook```
    This will open a brower window.
-6. Navigate to the notebook file: heartprediction.ipynb
-7. Run all of the cells. Locate the Jupyter menu -> Kernel -> Restart & Run All. This runs all cells from start to finish.
+8. Navigate to the notebook file: heartprediction.ipynb
+9. Run all of the cells. Locate the Jupyter menu at the top of the file-> Kernel -> Restart & Run All Cells. This runs all cells from start to finish. You will see the output as each cell finishes running.
 
 ## Results
 Note that the results you will get in this notebook are different than those we reported in the paper and presentation. While no changes were made to the code, my final run of the results proposed different results, which may change explanations in the report and some concluding factors.  The results we recieved during my latest run are shown in the following tables. Below each table, we explain the differences between our original report.
