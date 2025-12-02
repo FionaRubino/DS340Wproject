@@ -1,10 +1,23 @@
 # DS340Wproject
 ## Dataset
 The dataset file is included within this repository. The data is loaded through the path of the repository, so just run the cell that loads the data to use it for this code. The data was obtained from : . This data was already preprocessed and converted into numerical format for model preparation. 
-## Imports
-Please download the following libraries before running the code: 
-## Implementation
-There is not much to running this notebook successfully. We have used a Jupyter Notebook to make it easy to interpret on your end. Simply, run each cell one after the other. Begin with loading the necessary imports. Then, run the baseline section to see the model results from the first part of the implementation. There will be 6 model blocks to run in the following order: Logistic Regression, SVM, KNN, XGBoost, Random Forest, and Decision Tree. Then, there is a pandas dataframe that was created to compare these results. Next, run the GridSearchCV section cell by cell, following the same order of models. There is no comparative table in this section. Finally, run the third and final section - combining GridSearchCV with PCHF feature engineering. First, run the cell containing the pchf block. Next, run the cells in same order as the previous two sections. The results from the third section are the results we use for the main analysis in the paper.
+ 
+## RUNNING THE NOTEBOOK
+1. Clone the repository:
+  In your terminal, run git clone https://github.com/FionaRubino/DS340Wproject.git
+2. Install Python if necessary. Verify you have Python 3.8+ installed with:
+     python --version
+   If you do not have python, you can install it.
+3. Install Jupyter by running:
+     pip install notebook
+4. Install required packages:
+     pip install -r requirements.txt
+5. Start Jupyter Notebook:
+    jupyter notebook
+   This will open a brower window.
+6. Navigate to the notebook file: heartdiseaseprediction.ipynb
+7. Run all of the cells. Locate the Jupyter menu -> Kernel -> Restart & Run All. This runs all cells from start to finish.
+
 ## Results
 Note that the results you will get in this notebook are different than those we reported in the paper and presentation. While no changes were made to the code, my final run of the results proposed different results, which may change explanations in the report and some concluding factors.  The results we recieved during my latest run are shown in the following tables. Below each table, we explain the differences between our original report.
 
