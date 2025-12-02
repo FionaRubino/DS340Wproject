@@ -1,10 +1,10 @@
 # DS340Wproject
 ## Dataset
-The dataset file is included within this repository. The data is loaded through the path of the repository, so just run the cell that loads the data to use it for this code. The data was obtained from : . This data was already preprocessed and converted into numerical format for model preparation. 
+The dataset file is included within this repository. The data is loaded through the path of the repository, so just run the cell that loads the data to use it for this code. The data was obtained from :https://www.kaggle.com/datasets/moazeldsokyx/heart-disease/data . This data was already preprocessed and converted into numerical format for model preparation. 
  
 ## RUNNING THE NOTEBOOK
 1. Clone the repository:
-  In your terminal, run ```git clone https://github.com/FionaRubino/DS340Wproject.git```
+  In your terminal, run ```git clone https://github.com/FionaRubino/DS340Wproject.git```. Navigate to the directory containing the repository.
 2. Install Python if necessary. Verify you have Python 3.8+ installed with:
      ```python --version```
    If you do not have python, you can install it here: https://www.python.org/downloads/ .
