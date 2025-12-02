@@ -4,9 +4,9 @@ The dataset file is included within this repository. The data is loaded through 
  
 ## RUNNING THE NOTEBOOK
 1. Clone the repository:
-  In your terminal, run ```git clone https://github.com/FionaRubino/DS340Wproject.git```. Navigate to the directory containing the repository.
+  In your terminal, run ```git clone https://github.com/FionaRubino/DS340Wproject.git```. Then run ```cd DS340Wproject``` to nagivate the proper directory.
 2. Install Python if necessary. Verify you have Python 3.8+ installed with:
-     ```python --version```
+     ```python --version``` or ```python3 --version``` if you have a MAC.
    If you do not have python, you can install it here: https://www.python.org/downloads/ .
 3. Install Jupyter by running:
      ```pip install notebook```
