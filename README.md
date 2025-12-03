@@ -6,17 +6,25 @@ The dataset file is included within this repository. The data is loaded through 
 1. Clone the repository:
   In your terminal, run ```git clone https://github.com/FionaRubino/DS340Wproject.git```. Then run ```cd DS340Wproject``` to nagivate the proper directory.
 2. Install Python if necessary. Verify you have Python 3.8+ installed with:
-     ```python --version``` or ```python3 --version``` if you have a MAC.
+     ```python --version``` or ```python3 --version``` if you have a MAC. Do not use Python 3.14.
    If you do not have python, you can install it here: https://www.python.org/downloads/ .
-4. Install Jupyter by running:
+3. ( MAC USERS ONLY) install HomeBrew by running the following in your terminal.
+    ```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"``` Confirm it is installed with ```brew --version```
+5. Install Jupyter by running:
      ```pip install notebook```
-5. Install required packages:
-     ```pip install -r requirements.txt```
-6. Start Jupyter Notebook by running: 
+6. Install required packages:
+     ```pip install -r requirements.txt``
+
+   For MAC users: need to account for xgboost incompatabilities.
+   Run the commands in the given order:```brew install libomp```
+   ```uninstall xgboost```
+   ```install xgboost```
+   
+8. Start Jupyter Notebook by running: 
     ```jupyter notebook``` or ```python -m notebook```
    This will open a brower window.
-8. Navigate to the notebook file: heartprediction.ipynb
-9. Run all of the cells. Locate the Jupyter menu at the top of the file-> Kernel -> Restart & Run All Cells. This runs all cells from start to finish. You will see the output as each cell finishes running.
+9. Navigate to the notebook file: heartprediction.ipynb
+10. Run all of the cells. Locate the Jupyter menu at the top of the file-> Kernel -> Restart & Run All Cells. This runs all cells from start to finish. You will see the output as each cell finishes running.
 
 ## Results
 Note that the results you will get in this notebook are different than those we reported in the paper and presentation. While no changes were made to the code, my final run of the results proposed different results, which may change explanations in the report and some concluding factors.  The results we recieved during my latest run are shown in the following tables. Below each table, we explain the differences between our original report.
